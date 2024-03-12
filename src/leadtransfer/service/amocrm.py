@@ -18,7 +18,13 @@ def get_access_token():
         "redirect_uri": settings.WR_INTEGRATION_REDIRECT_URI,
         "grant_type": "refresh_token",
     }
-    return requests.post(url, data=data).json()["access_token"]
+    print(data)
+    response = requests.post(url, data=data)
+    print(response.json())
+    print(response.text)
+    print(response)
+    return response.json()["access_token"]
+
 
 
 # TODO: replace body in request with method "get_custom_fields_values", get all fields ids
