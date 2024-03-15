@@ -2,5 +2,5 @@
 .env
 .venv/
 static/
-
+refresh_token.txt
 __pycache__/

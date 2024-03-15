@@ -18,6 +18,25 @@ WR_INTEGRATION_CODE = os.environ.get("WR_INTEGRATION_CODE")
 WR_INTEGRATION_REDIRECT_URI = os.environ.get("WR_INTEGRATION_REDIRECT_URI")
 WR_REFRESH_TOKEN = os.environ.get("WR_REFRESH_TOKEN")
 
+AMO_CONTACT_FIELD_IDS = {
+    1124905: "phone",
+    1124907: "email",
+    # 794014: "date",
+    # 784770: "site",
+    # 612396: "city",
+    # 794016: "page",
+}
+AMO_LEAD_FIELD_IDS = {
+    # 166045: "utm_source",
+    # 166043: "utm_medium",
+    # 166047: "utm_campaign",
+    # 166051: "utm_content",
+    # 166049: "utm_term",
+    # 754509: "roistat_visit",
+}
+AMO_LEAD_STATUS_ID = 64999962  # Стадия внутри воронки
+AMO_LEAD_PIPELINE_ID = 7908070  # Воронка
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

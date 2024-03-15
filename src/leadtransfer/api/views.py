@@ -20,4 +20,6 @@ class LeadTransferAPIView(CreateAPIView):
 
 class TestAPI(ListAPIView):
     def get(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_200_OK)
+        data = dict()
+        data["token"] = get_contact_fields()
+        return Response(data=data, status=status.HTTP_200_OK)

@@ -6,7 +6,7 @@ from pydantic import BaseModel, field_validator
 class ContactCreationData(BaseModel):
     phone: str
     email: str
-    date: datetime
+    date: str
     site: str
     city: str
     page: str
@@ -26,7 +26,7 @@ def get_contact_validated_data(data: dict) -> ContactCreationData:
     return ContactCreationData(
         phone=data.get("phones", [""])[0],
         email=data.get("mails", [""])[0],
-        date=datetime.now(),
+        date=datetime.now().strftime("%d.%m.%Y, %H:%M:%S"),
         site=data.get("site", ""),
         city=data.get("city", ""),
         page=data.get("page", ""),

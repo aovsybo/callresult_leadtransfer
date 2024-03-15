@@ -1,6 +1,6 @@
-from datetime import datetime
-
+import json
 import requests
+import time
 
 from django.conf import settings
 
@@ -8,71 +8,61 @@ from . import db
 from .validation import ContactCreationData, LeadCreationData
 
 
-# TODO: check if token expire time is less then an hour from current moment
-def get_access_token():
+def save_token_data(data: dict):
     url = f"https://{settings.WR_INTEGRATION_SUBDOMAIN}.amocrm.ru/oauth2/access_token"
+    response = requests.post(url, data=data).json()
+    data = {
+        "access_token": response['access_token'],
+        "refresh_token": response['refresh_token'],
+        "token_type": response['token_type'],
+        "expires_in": response['expires_in'],
+        "end_token_time": response['expires_in'] + time.time(),
+    }
+    with open(settings.BASE_DIR / 'refresh_token.txt', 'w') as outfile:
+        json.dump(data, outfile)
+    return data["access_token"]
+
+
+def auth():
+    data = {
+        'client_id': settings.WR_INTEGRATION_CLIENT_ID,
+        'client_secret': settings.WR_INTEGRATION_CLIENT_SECRET,
+        'grant_type': 'authorization_code',
+        'code': settings.WR_INTEGRATION_CODE,
+        'redirect_uri': settings.WR_INTEGRATION_REDIRECT_URI,
+    }
+    return save_token_data(data)
+
+
+def update_access_token(refresh_token: str):
     data = {
         "client_secret": settings.WR_INTEGRATION_CLIENT_SECRET,
         "client_id": settings.WR_INTEGRATION_CLIENT_ID,
-        "refresh_token": settings.WR_REFRESH_TOKEN,
         "redirect_uri": settings.WR_INTEGRATION_REDIRECT_URI,
+        "refresh_token": refresh_token,
         "grant_type": "refresh_token",
     }
-    print(data)
-    response = requests.post(url, data=data)
-    print(response.json())
-    print(response.text)
-    print(response)
-    return response.json()["access_token"]
+    return save_token_data(data)
 
 
+def get_access_token():
+    with open(settings.BASE_DIR / 'refresh_token.txt') as json_file:
+        token_info = json.load(json_file)
+        if token_info["end_token_time"] - 60 < time.time():
+            return update_access_token(token_info["refresh_token"])
+        else:
+            return dict(token_info)["access_token"]
 
-# TODO: replace body in request with method "get_custom_fields_values", get all fields ids
-def get_custom_fields_values(fields: dict):
+
+def get_custom_fields_values(field_ids: dict, data):
     custom_fields_values = []
-    for field_id, field_value in fields.items():
+    data = data.dict()
+    for field_id, field_name in field_ids.items():
         custom_fields_values.append({
             "field_id": field_id,
-            "values": [{"value": field_value}]
+            "values": [{"value": data[field_name]}]
         })
-
-
-def create_contact(data: ContactCreationData):
-    body = [{
-        "name": "Идентификация с сайта daigo.ru",
-        "custom_fields_values": [
-            {
-                "field_code": "PHONE",
-                "values": [{"value": data.phone}]
-            },
-            {
-                "field_code": "EMAIL",
-                "values": [{"value": data.email}]
-            },
-            {
-                "field_id": 794014,
-                "values": [{"value": data.date}]
-            },
-            {
-                "field_id": 784770,
-                "values": [{"value": data.site}]
-            },
-            {
-                "field_id": 612396,
-                "values": [{"value": data.city}]
-            },
-            {
-                "field_id": 794016,
-                "values": [{"value": data.page}]
-            },
-        ]
-    }]
-    headers = {
-        "Authorization": f"Bearer {get_access_token()}",
-    }
-    url = f"https://{settings.WR_INTEGRATION_SUBDOMAIN}.amocrm.ru/api/v4/contacts"
-    response = requests.post(url, json=body, headers=headers)
-    return response.json()['_embedded']['contacts'][0]['id']
+    return custom_fields_values
 
 
 def get_or_create_contact(validated_data):
@@ -84,54 +74,34 @@ def get_or_create_contact(validated_data):
     return contact_id
 
 
+def create_contact(data: ContactCreationData):
+    body = [{
+        "name": "Идентификация с сайта daigo.ru",
+        "custom_fields_values": get_custom_fields_values(settings.AMO_CONTACT_FIELD_IDS, data)
+    }]
+    headers = {
+        "Authorization": f"Bearer {get_access_token()}",
+    }
+    url = f"https://{settings.WR_INTEGRATION_SUBDOMAIN}.amocrm.ru/api/v4/contacts"
+    response = requests.post(url, json=body, headers=headers)
+    return response.json()['_embedded']['contacts'][0]['id']
+
+
 def create_lead(contact_id, data: LeadCreationData):
     body = [{
         "name": "Лид с сайта daigo.ru",
-        "pipeline_id": 7566897,
-        "status_id": 62668613,
+        "pipeline_id": settings.AMO_LEAD_PIPELINE_ID,
+        "status_id": settings.AMO_LEAD_STATUS_ID,
         "_embedded": {
             "contacts": [{"id": contact_id}]
         },
-        "custom_fields_values": [
-            {
-                "field_id": 166045,
-                "values": [{"value": data.utm_source}]
-            },
-            {
-                "field_id": 166043,
-                "values": [{"value": data.utm_medium}]
-            },
-            {
-                "field_id": 166047,
-                "values": [{"value": data.utm_campaign}]
-            },
-            {
-                "field_id": 166051,
-                "values": [{"value": data.utm_content}]
-            },
-            {
-                "field_id": 166049,
-                "values": [{"value": data.utm_term}]
-            },
-            {
-                "field_id": 754509,
-                "values": [{"value": data.roistat_visit}]
-            },
-        ]
+        "custom_fields_values": get_custom_fields_values(settings.AMO_LEAD_FIELD_IDS, data)
     }]
     headers = {
         "Authorization": f"Bearer {get_access_token()}",
     }
     url = f"https://{settings.WR_INTEGRATION_SUBDOMAIN}.amocrm.ru/api/v4/leads"
     return requests.post(url, json=body, headers=headers).json()
-
-
-def get_contacts():
-    headers = {
-        "Authorization": f"Bearer {get_access_token()}",
-    }
-    url = f"https://{settings.WR_INTEGRATION_SUBDOMAIN}.amocrm.ru/api/v4/contacts"
-    return requests.get(url, headers=headers)
 
 
 def send_lead_to_amocrm(contact_validated_data, lead_validated_data):
