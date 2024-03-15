@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from django.conf import settings
+
 from pydantic import BaseModel, field_validator
 
 
@@ -51,3 +53,23 @@ def get_lead_validated_data(data: dict) -> LeadCreationData:
         utm_term=data["utm"]["utm_term"],
         roistat_visit=data["roistat_visit"],
     )
+
+
+def get_phone_from_fields(custom_fields_values):
+    for custom_field in custom_fields_values:
+        if custom_field["field_id"] == settings.AMO_CONTACT_FIELD_IDS["phone"]:
+            return custom_field["values"][0]["value"]
+    return ""
+
+
+def get_contact_list_validated_data(contacts: list):
+    validated_contacts = []
+    for contact in contacts:
+        if "custom_fields_values" in contact and contact["custom_fields_values"]:
+            phone = get_phone_from_fields(contact["custom_fields_values"])
+            if phone:
+                validated_contacts.append({
+                    "contact_id": contact["id"],
+                    "phone": phone,
+                })
+    return validated_contacts

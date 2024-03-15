@@ -5,7 +5,7 @@ import time
 from django.conf import settings
 
 from . import db
-from .validation import ContactCreationData, LeadCreationData
+from .validation import ContactCreationData, LeadCreationData, get_contact_list_validated_data
 
 
 def save_token_data(data: dict):
@@ -57,7 +57,7 @@ def get_access_token():
 def get_custom_fields_values(field_ids: dict, data):
     custom_fields_values = []
     data = data.dict()
-    for field_id, field_name in field_ids.items():
+    for field_name, field_id in field_ids.items():
         custom_fields_values.append({
             "field_id": field_id,
             "values": [{"value": data[field_name]}]
@@ -107,3 +107,12 @@ def create_lead(contact_id, data: LeadCreationData):
 def send_lead_to_amocrm(contact_validated_data, lead_validated_data):
     contact_id = get_or_create_contact(contact_validated_data)
     create_lead(contact_id, lead_validated_data)
+
+
+def get_amo_contacts():
+    headers = {
+        "Authorization": f"Bearer {get_access_token()}",
+    }
+    url = f"https://{settings.WR_INTEGRATION_SUBDOMAIN}.amocrm.ru/api/v4/contacts"
+    contacts = requests.get(url, headers=headers).json()["_embedded"]["contacts"]
+    return get_contact_list_validated_data(contacts)
