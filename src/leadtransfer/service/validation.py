@@ -62,6 +62,15 @@ def get_phone_from_fields(custom_fields_values):
     return ""
 
 
+def validate_phone(phone: str):
+    remove_symbols = "+_-() "
+    for symbol in remove_symbols:
+        phone = phone.replace(symbol, "")
+    if phone[0] == 8:
+        phone[0] = 7
+    return phone
+
+
 def get_contact_list_validated_data(contacts: list):
     validated_contacts = []
     for contact in contacts:
@@ -70,6 +79,6 @@ def get_contact_list_validated_data(contacts: list):
             if phone:
                 validated_contacts.append({
                     "contact_id": contact["id"],
-                    "phone": phone,
+                    "phone": validate_phone(phone),
                 })
     return validated_contacts

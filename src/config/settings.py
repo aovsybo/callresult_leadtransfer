@@ -19,8 +19,8 @@ WR_INTEGRATION_REDIRECT_URI = os.environ.get("WR_INTEGRATION_REDIRECT_URI")
 WR_REFRESH_TOKEN = os.environ.get("WR_REFRESH_TOKEN")
 
 AMO_CONTACT_FIELD_IDS = {
-    "phone": 1124905,
-    "email": 1124907,
+    "phone": 156657,
+    "email": 156659,
     # "date": 794014,
     # "site": 784770,
     # "city": 612396,

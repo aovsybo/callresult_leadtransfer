@@ -13,11 +13,18 @@ class SyncContactsAPIView(ListAPIView):
     queryset = CRMContact.objects.all()
 
     def get(self, request, *args, **kwargs):
-        contacts = get_amo_contacts()
-        serializer = CRMContactSerializer(data=contacts, many=True)
-        if serializer.is_valid():
-            serializer.save()
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+        data_len = 0
+        page = 1
+        while True:
+            try:
+                contacts = get_amo_contacts(page=page)
+            except Exception as e:
+                break
+            serializer = CRMContactSerializer(data=contacts, many=True)
+            if serializer.is_valid():
+                serializer.save()
+            data_len += len(serializer.data)
+        return Response(data={"len": data_len, "pages": page}, status=status.HTTP_200_OK)
 
 
 class LeadTransferAPIView(CreateAPIView):
@@ -34,5 +41,4 @@ class LeadTransferAPIView(CreateAPIView):
 class TestAPI(ListAPIView):
     def get(self, request, *args, **kwargs):
         data = dict()
-        data["c"] = get_amo_contacts()
         return Response(data=data, status=status.HTTP_200_OK)
