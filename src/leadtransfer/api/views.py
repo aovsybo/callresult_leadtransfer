@@ -14,8 +14,7 @@ class SyncContactsAPIView(ListAPIView):
 
     def get(self, request, *args, **kwargs):
         data_len = 0
-        page = 1
-        while True:
+        for page in range(300):
             try:
                 contacts = get_amo_contacts(page=page)
             except Exception as e:
@@ -24,7 +23,7 @@ class SyncContactsAPIView(ListAPIView):
             if serializer.is_valid():
                 serializer.save()
             data_len += len(serializer.data)
-        return Response(data={"len": data_len, "pages": page}, status=status.HTTP_200_OK)
+        return Response(data={"len": data_len}, status=status.HTTP_200_OK)
 
 
 class LeadTransferAPIView(CreateAPIView):
