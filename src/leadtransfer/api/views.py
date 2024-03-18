@@ -34,5 +34,5 @@ class LeadTransferAPIView(CreateAPIView):
 class TestAPI(ListAPIView):
     def get(self, request, *args, **kwargs):
         data = dict()
-        # data["c"] = get_amo_contacts()
+        data["c"] = get_amo_contacts()
         return Response(data=data, status=status.HTTP_200_OK)
