@@ -84,6 +84,8 @@ def create_contact(data: ContactCreationData):
     }
     url = f"https://{settings.WR_INTEGRATION_SUBDOMAIN}.amocrm.ru/api/v4/contacts"
     response = requests.post(url, json=body, headers=headers)
+    print(body)
+    print(response.json())
     return response.json()['_embedded']['contacts'][0]['id']
 
 

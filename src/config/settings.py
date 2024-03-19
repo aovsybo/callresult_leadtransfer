@@ -23,7 +23,7 @@ AMO_CONTACT_FIELD_IDS = {
     "email": 156659,
     "date": 794014,
     "site": 784770,
-    "city": 612396,
+    # "city": 612396,
     "page": 794016,
 }
 AMO_LEAD_FIELD_IDS = {
