@@ -1,3 +1,5 @@
+from json import JSONDecodeError
+
 from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
@@ -14,11 +16,11 @@ class SyncContactsAPIView(ListAPIView):
 
     def get(self, request, *args, **kwargs):
         data_len = 0
-        page = 1
+        page = 1000
         while True:
             try:
                 contacts = get_amo_contacts(page=page)
-            except Exception as e:
+            except JSONDecodeError as e:
                 break
             serializer = CRMContactSerializer(data=contacts, many=True)
             if serializer.is_valid():
