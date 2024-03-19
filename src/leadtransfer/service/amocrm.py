@@ -114,6 +114,5 @@ def get_amo_contacts(page: int):
         "Authorization": f"Bearer {get_access_token()}",
     }
     url = f"https://{settings.WR_INTEGRATION_SUBDOMAIN}.amocrm.ru/api/v4/contacts"
-    contacts = requests.get(url, headers=headers, params={"page": page, "limit": 250}).json()
-    print(contacts)
-    return get_contact_list_validated_data(contacts["_embedded"]["contacts"])
+    contacts = requests.get(url, headers=headers, params={"page": page, "limit": 250}).json()["_embedded"]["contacts"]
+    return get_contact_list_validated_data(contacts)
