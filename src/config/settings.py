@@ -21,21 +21,21 @@ WR_REFRESH_TOKEN = os.environ.get("WR_REFRESH_TOKEN")
 AMO_CONTACT_FIELD_IDS = {
     "phone": 156657,
     "email": 156659,
-    # "date": 794014,
-    # "site": 784770,
-    # "city": 612396,
-    # "page": 794016,
+    "date": 794014,
+    "site": 784770,
+    "city": 612396,
+    "page": 794016,
 }
 AMO_LEAD_FIELD_IDS = {
-    # "utm_source": 166045,
-    # "utm_medium": 166043,
-    # "utm_campaign": 166047,
-    # "utm_content": 166051,
-    # "utm_term": 166049,
-    # "roistat_visit": 754509,
+    "utm_source": 166045,
+    "utm_medium": 166043,
+    "utm_campaign": 166047,
+    "utm_content": 166051,
+    "utm_term": 166049,
+    "roistat_visit": 754509,
 }
-AMO_LEAD_STATUS_ID = 64999962  # Стадия внутри воронки
-AMO_LEAD_PIPELINE_ID = 7908070  # Воронка
+AMO_LEAD_STATUS_ID = 62668613  # Стадия внутри воронки
+AMO_LEAD_PIPELINE_ID = 7566897  # Воронка
 
 INSTALLED_APPS = [
     'django.contrib.admin',
