@@ -26,6 +26,7 @@ class SyncContactsAPIView(ListAPIView):
             if serializer.is_valid():
                 serializer.save()
             data_len += len(serializer.data)
+            print(page)
             page += 1
         return Response(data={"len": data_len}, status=status.HTTP_200_OK)
 
