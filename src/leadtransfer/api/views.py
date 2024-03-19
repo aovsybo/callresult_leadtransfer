@@ -16,18 +16,18 @@ class SyncContactsAPIView(ListAPIView):
 
     def get(self, request, *args, **kwargs):
         data_len = 0
-        page = 191
+        page = 1
         while True:
             try:
                 contacts = get_amo_contacts(page=page)
+                serializer = CRMContactSerializer(data=contacts, many=True)
+                if serializer.is_valid():
+                    serializer.save()
+                data_len += len(serializer.data)
             except JSONDecodeError as e:
                 break
             except Exception as e:
                 print(e)
-            serializer = CRMContactSerializer(data=contacts, many=True)
-            if serializer.is_valid():
-                serializer.save()
-            data_len += len(serializer.data)
             print(page)
             page += 1
         return Response(data={"len": data_len}, status=status.HTTP_200_OK)
