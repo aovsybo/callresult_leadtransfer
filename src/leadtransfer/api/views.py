@@ -16,7 +16,7 @@ class SyncContactsAPIView(ListAPIView):
 
     def get(self, request, *args, **kwargs):
         data_len = 0
-        page = 1000
+        page = 1
         while True:
             try:
                 contacts = get_amo_contacts(page=page)
