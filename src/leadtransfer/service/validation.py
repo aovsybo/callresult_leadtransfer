@@ -46,12 +46,12 @@ class LeadCreationData(BaseModel):
 
 def get_lead_validated_data(data: dict) -> LeadCreationData:
     return LeadCreationData(
-        utm_source=data["utm"]["utm_source"],
-        utm_medium=data["utm"]["utm_medium"],
-        utm_campaign=data["utm"]["utm_campaign"],
-        utm_content=data["utm"]["utm_content"],
-        utm_term=data["utm"]["utm_term"],
-        roistat_visit=data["roistat_visit"],
+        utm_source=data.get("utm", dict()).get("utm_source", ""),
+        utm_medium=data.get("utm", dict()).get("utm_medium", ""),
+        utm_campaign=data.get("utm", dict()).get("utm_campaign", ""),
+        utm_content=data.get("utm", dict()).get("utm_content", ""),
+        utm_term=data.get("utm", dict()).get("utm_term", ""),
+        roistat_visit=data.get("roistat_visit", ""),
     )
 
 
