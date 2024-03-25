@@ -10,7 +10,8 @@ from .validation import ContactCreationData, LeadCreationData, get_contact_list_
 
 def save_token_data(data: dict):
     url = f"https://{settings.WR_INTEGRATION_SUBDOMAIN}.amocrm.ru/oauth2/access_token"
-    response = requests.post(url, data=data).json()
+    response = requests.post(url, json=data).json()
+    print(response)
     data = {
         "access_token": response['access_token'],
         "refresh_token": response['refresh_token'],
@@ -36,13 +37,24 @@ def auth():
 
 def update_access_token(refresh_token: str):
     data = {
-        "client_secret": settings.WR_INTEGRATION_CLIENT_SECRET,
         "client_id": settings.WR_INTEGRATION_CLIENT_ID,
-        "redirect_uri": settings.WR_INTEGRATION_REDIRECT_URI,
-        "refresh_token": refresh_token,
+        "client_secret": settings.WR_INTEGRATION_CLIENT_SECRET,
         "grant_type": "refresh_token",
+        "refresh_token": refresh_token,
+        "redirect_uri": settings.WR_INTEGRATION_REDIRECT_URI,
     }
     return save_token_data(data)
+
+
+def test_refresh():
+    with open(settings.BASE_DIR / 'refresh_token.txt') as json_file:
+        token_info = json.load(json_file)
+        return update_access_token(token_info["refresh_token"])
+
+
+def test_fw():
+    with open(settings.BASE_DIR / 'test.txt', 'w') as outfile:
+        json.dump({"data": "data"}, outfile)
 
 
 def get_access_token():

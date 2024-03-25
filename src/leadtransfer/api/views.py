@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from .serializers import CRMContactSerializer
 from ..models import CRMContact
-from ..service.amocrm import send_lead_to_amocrm, get_amo_contacts
+from ..service.amocrm import send_lead_to_amocrm, get_amo_contacts, test_fw
 from ..service.validation import get_lead_validated_data, get_contact_validated_data
 
 
@@ -47,4 +47,5 @@ class LeadTransferAPIView(CreateAPIView):
 class TestAPI(ListAPIView):
     def get(self, request, *args, **kwargs):
         data = dict()
+        test_fw()
         return Response(data=data, status=status.HTTP_200_OK)
