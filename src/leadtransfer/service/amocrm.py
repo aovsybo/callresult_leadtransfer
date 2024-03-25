@@ -52,11 +52,6 @@ def test_refresh():
         return update_access_token(token_info["refresh_token"])
 
 
-def test_fw():
-    with open(settings.BASE_DIR / 'test.txt', 'w') as outfile:
-        json.dump({"data": "data"}, outfile)
-
-
 def get_access_token():
     with open(settings.BASE_DIR / 'refresh_token.txt') as json_file:
         token_info = json.load(json_file)
