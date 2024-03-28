@@ -44,10 +44,10 @@ class LeadTransferAPIView(CreateAPIView):
                     f"request_time: {datetime.now()}\n"
                     f"validated_contact: {validated_contact}\n"
                     f"validated_deal: {validated_deal}\n")
-        # send_lead_to_amocrm(
-        #     get_contact_validated_data(request.data),
-        #     get_lead_validated_data(request.data)
-        # )
+        send_lead_to_amocrm(
+            get_contact_validated_data(request.data),
+            get_lead_validated_data(request.data)
+        )
         return Response(status=status.HTTP_200_OK)
 
 
