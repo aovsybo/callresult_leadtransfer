@@ -1,3 +1,4 @@
+import json
 import logging
 from datetime import datetime
 
@@ -40,7 +41,7 @@ class LeadTransferAPIView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         validated_contact = get_contact_validated_data(request.data)
         validated_deal = get_lead_validated_data(request.data)
-        logger.info(f"request_data: {request.data}\n"
+        logger.info(f"request_data: {json.dumps(request.data)}\n"
                     f"request_time: {datetime.now()}\n"
                     f"validated_contact: {validated_contact}\n"
                     f"validated_deal: {validated_deal}\n")
