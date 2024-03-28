@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from .serializers import CRMContactSerializer
 from ..service.amocrm import send_lead_to_amocrm
-from ..service.validation import get_lead_validated_data, get_contact_validated_data
+from ..service.validation import ContactCreationData, LeadCreationData
 
 logger = logging.getLogger(__name__)
 
@@ -39,8 +39,9 @@ class LeadTransferAPIView(CreateAPIView):
     serializer_class = CRMContactSerializer
 
     def post(self, request, *args, **kwargs):
-        validated_contact = get_contact_validated_data(request.data)
-        validated_deal = get_lead_validated_data(request.data)
+
+        validated_contact = ContactCreationData.model_validate(request.data)
+        validated_deal = LeadCreationData.model_validate(request.data)
         logger.info(f"request_data: {request.data}\n"
                     f"request_time: {datetime.now()}\n"
                     f"validated_contact: {validated_contact}\n"
