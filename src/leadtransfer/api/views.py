@@ -44,7 +44,7 @@ class LeadTransferAPIView(CreateAPIView):
         logger.info(f"request_data: {request.data}\n"
                     f"request_time: {datetime.now()}\n"
                     f"validated_contact: {validated_contact}\n"
-                    f"validated_deal: {validated_deal}\n".encode('utf-8'))
+                    f"validated_deal: {validated_deal}\n")
         send_lead_to_amocrm(
             validated_contact,
             validated_deal
