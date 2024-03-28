@@ -41,24 +41,12 @@ class LeadTransferAPIView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         validated_contact = get_contact_validated_data(request.data)
         validated_deal = get_lead_validated_data(request.data)
-        logger.info('request_data: {0}\nrequest_time: {1}\nvalidated_contact: {2}\nvalidated_deal: {3}\n'.format(
-            request.data,
-            datetime.now(),
-            validated_contact,
-            validated_deal,
-        ))
-        # logger.info(f"request_data: {request.data}\n"
-        #             f"request_time: {datetime.now()}\n"
-        #             f"validated_contact: {validated_contact}\n"
-        #             f"validated_deal: {validated_deal}\n".encode('utf-8'))
+        logger.info(f"request_data: {request.data}\n"
+                    f"request_time: {datetime.now()}\n"
+                    f"validated_contact: {validated_contact}\n"
+                    f"validated_deal: {validated_deal}\n".encode('utf-8'))
         send_lead_to_amocrm(
             validated_contact,
             validated_deal
         )
         return Response(status=status.HTTP_200_OK)
-
-
-# class TestAPI(ListAPIView):
-#     def get(self, request, *args, **kwargs):
-#         data = dict()
-#         return Response(data=data, status=status.HTTP_200_OK)
