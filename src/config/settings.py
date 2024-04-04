@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-SECRET_KEY = 'django-insecure-o^vy^sje-9(7*rbcga-@c0vvxp*j_%kwo@s9+l57tgfqyfp&gu'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = True if os.environ.get("DEBUG") == "True" else False
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(',')
 
