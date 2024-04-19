@@ -106,12 +106,3 @@ def create_lead(contact_id, data: LeadCreationData):
 def send_lead_to_amocrm(contact_validated_data, lead_validated_data):
     contact_id = get_or_create_contact(contact_validated_data)
     create_lead(contact_id, lead_validated_data)
-
-
-# def get_amo_contacts(page: int):
-#     headers = {
-#         "Authorization": f"Bearer {get_access_token()}",
-#     }
-#     url = f"https://{settings.WR_INTEGRATION_SUBDOMAIN}.amocrm.ru/api/v4/contacts"
-#     contacts = requests.get(url, headers=headers, params={"page": page, "limit": 250}).json()["_embedded"]["contacts"]
-#     return get_contact_list_validated_data(contacts)

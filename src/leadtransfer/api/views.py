@@ -12,34 +12,11 @@ from ..service.validation import ContactCreationData, LeadCreationData
 
 logger = logging.getLogger(__name__)
 
-# class SyncContactsAPIView(ListAPIView):
-#     serializer_class = CRMContactSerializer
-#     queryset = CRMContact.objects.all()
-#
-#     def get(self, request, *args, **kwargs):
-#         data_len = 0
-#         page = 1
-#         while True:
-#             try:
-#                 contacts = get_amo_contacts(page=page)
-#                 serializer = CRMContactSerializer(data=contacts, many=True)
-#                 if serializer.is_valid():
-#                     serializer.save()
-#                 data_len += len(serializer.data)
-#             except JSONDecodeError as e:
-#                 break
-#             except Exception as e:
-#                 print(e)
-#             print(page)
-#             page += 1
-#         return Response(data={"len": data_len}, status=status.HTTP_200_OK)
-
 
 class LeadTransferAPIView(CreateAPIView):
     serializer_class = CRMContactSerializer
 
     def post(self, request, *args, **kwargs):
-
         validated_contact = ContactCreationData.model_validate(request.data)
         validated_deal = LeadCreationData.model_validate(request.data)
         logger.info(f"request_data: {request.data}\n"
