@@ -1,9 +1,8 @@
 from django.urls import path
 
-from .views import LeadTransferAPIView
+from .views import LeadTransferAPIView, LeadCreationAPIView
 
 urlpatterns = [
-    # path('tests/', TestAPI.as_view(), name='tests'),
-    # path('sync-contacts/', SyncContactsAPIView.as_view(), name='sync-contacts'),
+    path('lead-moloko/', LeadCreationAPIView.as_view(), name='lead-moloko'),
     path('lead-transfer/', LeadTransferAPIView.as_view(), name='lead_transfer'),
 ]
