@@ -3,5 +3,6 @@
 .venv/
 static/
 refresh_token.txt
+moloko_refresh_token.txt
 WantresultIncomingLeads.log
 __pycache__/

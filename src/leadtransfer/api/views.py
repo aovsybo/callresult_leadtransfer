@@ -9,6 +9,7 @@ from rest_framework.response import Response
 
 from .serializers import CRMContactSerializer
 from ..service.amocrm import send_lead_to_amocrm
+from ..service import amocrm_moloko
 from ..service.validation import ContactCreationData, LeadCreationData
 
 logger = logging.getLogger(__name__)
@@ -16,9 +17,10 @@ logger = logging.getLogger(__name__)
 
 class LeadCreationAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        logger.info(f"request_data: {request.data}\n"
+        logger.info(f"request_data: {json.dumps(request.data)}\n"
                     f"request_time: {datetime.now()}\n")
-        return Response(status=status.HTTP_200_OK)
+        data = amocrm_moloko.handle_deal(request.data.get("leads[status][0][id]", [""])[0])
+        return Response(data=data, status=status.HTTP_200_OK)
 
 
 class LeadTransferAPIView(CreateAPIView):
