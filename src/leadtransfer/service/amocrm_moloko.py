@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import requests
 import time
@@ -90,20 +91,25 @@ def _get_lead_by_id(lead_id: str):
     return requests.get(url, headers=headers).json()
 
 
-# def _get_events():
-#     headers = {
-#         "Authorization": f"Bearer {_get_access_token()}",
-#     }
-#     json = {
-#         "filter[entity_id]": "14003467"        },
-#     }
-#     url = f"https://{settings.AMO_MOLOKO_INTEGRATION_SUBDOMAIN}.amocrm.ru/api/v4/events"
-#     return requests.get(url, json=json, headers=headers).json()
+def _get_last_lead_comment(lead_id: str):
+    headers = {
+        "Authorization": f"Bearer {_get_access_token()}",
+    }
+    lead_links = requests.get(
+        f"https://{settings.AMO_MOLOKO_INTEGRATION_SUBDOMAIN}.amocrm.ru/api/v4/leads/{lead_id}/links",
+        headers=headers
+    ).json()
+    company_id = lead_links['_embedded']['links'][1]['to_entity_id']
+    company_notes = requests.get(
+        f"https://{settings.AMO_MOLOKO_INTEGRATION_SUBDOMAIN}.amocrm.ru/api/v4/companies/{company_id}/notes",
+        headers=headers
+    ).json()
+    comments = [note["params"]["text"] for note in company_notes["_embedded"]["notes"] if "text" in note["params"]]
+    return comments[-1]
 
 
 def handle_deal(lead_id: str):
     lead = _get_lead_by_id(lead_id)
-    # print(_get_events())
     if lead["pipeline_id"] != 8137234:
         return
     contact_id = get_contact_id_by_lead_id(lead_id)
@@ -111,7 +117,7 @@ def handle_deal(lead_id: str):
     phone_number = _get_phone_number(contact_data)
     send_mail(
         "Лид",
-        f"Номер телефона: {phone_number}",
+        f"Номер телефона: {phone_number}\nКомментарий: {_get_last_lead_comment(lead_id)}",
         settings.EMAIL_HOST_USER,
         [settings.EMAIL_RECEIVER],
         fail_silently=False,

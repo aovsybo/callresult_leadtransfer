@@ -19,8 +19,9 @@ class LeadCreationAPIView(APIView):
     def post(self, request, *args, **kwargs):
         logger.info(f"request_data: {json.dumps(request.data)}\n"
                     f"request_time: {datetime.now()}\n")
-        data = amocrm_moloko.handle_deal(request.data.get("leads[status][0][id]", [""])[0])
-        return Response(data=data, status=status.HTTP_200_OK)
+        deal_id = request.data.get("leads[status][0][id]", [""])[0]
+        amocrm_moloko.handle_deal(deal_id)
+        return Response(status=status.HTTP_200_OK)
 
 
 class LeadTransferAPIView(CreateAPIView):
